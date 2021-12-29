@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"github.com/shazow/ssh-chat/cmd/ssh-chat/key"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -115,7 +116,7 @@ func main() {
 			}
 		}
 
-		signer, err := ReadPrivateKey(privateKeyPath)
+		signer, err := key.ReadPrivateKey(privateKeyPath)
 		if err != nil {
 			fail(3, "Failed to read identity private key: %v\n", err)
 		}
