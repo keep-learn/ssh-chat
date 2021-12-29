@@ -75,6 +75,7 @@ func main() {
 		return
 	}
 
+	// pprof 配置
 	if options.Pprof != 0 {
 		go func() {
 			fmt.Println(http.ListenAndServe(fmt.Sprintf("localhost:%d", options.Pprof), nil))
@@ -125,6 +126,7 @@ func main() {
 		fmt.Printf("Added server identity: %s\n", sshd.Fingerprint(signer.PublicKey()))
 	}
 
+	// 创建ssh链接
 	s, err := sshd.ListenSSH(options.Bind, config)
 	if err != nil {
 		fail(4, "Failed to listen on socket: %v\n", err)
@@ -134,6 +136,7 @@ func main() {
 
 	fmt.Printf("Listening for connections on %v\n", s.Addr().String())
 
+	// 在这个方法中初始化了路由信息（自定义命令）
 	host := sshchat.NewHost(s, auth)
 	host.SetTheme(message.Themes[0])
 	host.Version = Version
@@ -157,6 +160,7 @@ func main() {
 		fail(5, "Failed to load admins: %v\n", err)
 	}
 
+	// server端配置的白名单
 	err = fromFile(options.Whitelist, func(line []byte) error {
 		key, _, _, _, err := ssh.ParseAuthorizedKey(line)
 		if err != nil {
@@ -172,6 +176,7 @@ func main() {
 		fail(6, "Failed to load whitelist: %v\n", err)
 	}
 
+	// 读取文件，应该是配置
 	if options.Motd != "" {
 		host.GetMOTD = func() (string, error) {
 			motd, err := ioutil.ReadFile(options.Motd)
@@ -191,6 +196,7 @@ func main() {
 		}
 	}
 
+	// 日志相关
 	if options.Log == "-" {
 		host.SetLogging(os.Stdout)
 	} else if options.Log != "" {
@@ -201,6 +207,7 @@ func main() {
 		host.SetLogging(fp)
 	}
 
+	// 启动服务、监听服务，跟http的类似
 	go host.Serve()
 
 	// Construct interrupt handler

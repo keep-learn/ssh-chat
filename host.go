@@ -20,6 +20,7 @@ import (
 const maxInputLength int = 1024
 
 // GetPrompt will render the terminal prompt string based on the user.
+// 这个方法是：显示前缀信息的；例如：[root]
 func GetPrompt(user *message.User) string {
 	name := user.Name()
 	cfg := user.Config()
@@ -64,8 +65,10 @@ func NewHost(listener *sshd.SSHListener, auth *Auth) *Host {
 	}
 
 	// Make our own commands registry instance.
+	// 自定义消息
 	chat.InitCommands(&h.commands)
 	h.InitCommands(&h.commands)
+	// 将自定义消息注入
 	room.SetCommands(h.commands)
 
 	go room.Serve()

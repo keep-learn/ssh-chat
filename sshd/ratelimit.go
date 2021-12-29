@@ -41,6 +41,7 @@ type inputLimiter struct {
 
 // NewInputLimiter returns a rateio.Limiter with sensible defaults for
 // differentiating between humans typing and bots spamming.
+// 限流
 func NewInputLimiter() rateio.Limiter {
 	grace := time.Second * 3
 	return &inputLimiter{
