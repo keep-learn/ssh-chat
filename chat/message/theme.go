@@ -31,6 +31,9 @@ const (
 
 	// BEL
 	Bel = "\007"
+
+	// 前缀
+	PreEmoji = "✨"
 )
 
 // Interface for Styles

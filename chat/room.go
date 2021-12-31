@@ -179,6 +179,7 @@ func (r *Room) History(u *message.User) {
 }
 
 // Join the room as a user, will announce.
+// on connect 触发
 func (r *Room) Join(u *message.User) (*Member, error) {
 	// TODO: Check if closed
 	if u.ID() == "" {
@@ -191,7 +192,10 @@ func (r *Room) Join(u *message.User) (*Member, error) {
 	}
 	// TODO: Remove user ID from sets, probably referring to a prior user.
 	r.History(u)
-	s := fmt.Sprintf("%s joined. (Connected: %d)", u.Name(), r.Members.Len())
+	s := fmt.Sprintf("Hello %s ! (Connected: %d)" +
+		"\n\n" +
+		"Welcome to ruoxi.fun . Let's together learn !" +
+		"\n\n", u.Name(), r.Members.Len())
 	r.Send(message.NewAnnounceMsg(s))
 	return member, nil
 }
