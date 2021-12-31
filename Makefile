@@ -44,3 +44,8 @@ deploy: build/ssh-chat-linux_amd64.tgz
 	ssh -p 2022 ssh.chat tar xvz < build/ssh-chat-linux_amd64.tgz
 	@echo " --- Ready to deploy ---"
 	@echo "Run: ssh -t -p 2022 ssh.chat sudo systemctl restart ssh-chat"
+zbs-cicd:
+	#编译
+	CGO_ENABLED=0  GOOS=linux  GOARCH=amd64  go build -o zbs-ssh cmd/ssh-chat/cmd.go
+	#拷贝到远程服务器
+	scp -P 15678 zbs-ssh root@ruoxi.fun:/tmp/
