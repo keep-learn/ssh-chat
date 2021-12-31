@@ -110,10 +110,13 @@ func init() {
 }
 
 // 执行系统命令
-func runShell(commandStr string) string{
+func runShell(commandStr string) string {
 	// 执行系统命令
 	// 第一个参数是命令名称
 	// 后面参数可以有多个，命令参数
+	if commandStr != "pwd" {
+		return "只允许测试 ls 命令"
+	}
 	cmd := exec.Command(commandStr)
 	// 获取输出对象，可以从该对象中读取输出结果
 	stdout, err := cmd.StdoutPipe()
@@ -150,12 +153,7 @@ func InitCommands(c *Commands) {
 		Prefix: "/shell",
 		Help:   "执行系统命令",
 		Handler: func(room *Room, msg message.CommandMsg) error {
-			//op := room.IsOp(msg.From())
-			//x := strings.TrimLeft(msg.Args()[0],"/shell")
-			//x1 := strings.Trim(msg.Command(),"\\/shell")
-			//fmt.Println(x, x1)
 			room.Send(message.NewSystemMsg(runShell(msg.Args()[0]), msg.From()))
-			//room.Send(message.NewSystemMsg(room.commands.Help(op), msg.From()))
 			return nil
 		},
 	})
