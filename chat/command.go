@@ -116,7 +116,7 @@ func runShell(commandStr string) string {
 	// 第一个参数是命令名称
 	// 后面参数可以有多个，命令参数
 	if commandStr != "pwd" {
-		return "只允许测试 ls 命令"
+		return "只允许测试 pwd 命令"
 	}
 	cmd := exec.Command(commandStr)
 	// 获取输出对象，可以从该对象中读取输出结果
