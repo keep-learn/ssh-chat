@@ -5,6 +5,7 @@ package chat
 import (
 	"errors"
 	"fmt"
+	"github.com/roseduan/minidb"
 	"io/ioutil"
 	"log"
 	"os/exec"
@@ -157,6 +158,38 @@ func InitCommands(c *Commands) {
 			return nil
 		},
 	})
+	// 设置命令
+	c.Add(Command{
+		Prefix: "/set",
+		Help:   "模仿redis 设置值",
+		Handler: func(room *Room, msg message.CommandMsg) error {
+			db, err := minidb.Open("/tmp/minidb")
+			if err != nil {
+				log.Fatal(err)
+			}
+			err = db.Put([]byte(msg.Args()[0]), []byte(msg.Args()[1]))
+			room.Send(message.NewSystemMsg("OK", msg.From()))
+			return nil
+		},
+	})
+	// 获取命令
+	c.Add(Command{
+		Prefix: "/get",
+		Help:   "模仿redis 获取值",
+		Handler: func(room *Room, msg message.CommandMsg) error {
+			db, err := minidb.Open("/tmp/minidb")
+			if err != nil {
+				log.Fatal(err)
+			}
+			val, err := db.Get([]byte(msg.Args()[0]))
+			if err != nil {
+				log.Fatal(err)
+			}
+			room.Send(message.NewSystemMsg(string(val), msg.From()))
+			return nil
+		},
+	})
+
 	c.Add(Command{
 		Prefix: "/me",
 		Handler: func(room *Room, msg message.CommandMsg) error {
