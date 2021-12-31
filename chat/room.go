@@ -94,6 +94,7 @@ func (r *Room) SetLogging(out io.Writer) {
 	r.history.SetOutput(out)
 }
 
+// 处理消息的方法
 // HandleMsg reacts to a message, will block until done.
 func (r *Room) HandleMsg(m message.Message) {
 	var fromID string
@@ -115,6 +116,7 @@ func (r *Room) HandleMsg(m message.Message) {
 		}
 	}
 
+	// 这里是处理消息的方法！！！！！！
 	switch m := m.(type) {
 	case *message.CommandMsg:
 		cmd := *m

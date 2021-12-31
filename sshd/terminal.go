@@ -80,13 +80,21 @@ func (e Env) Get(key string) string {
 
 // Terminal extends ssh/terminal to include a close method
 type Terminal struct {
+	// 控制台
 	terminal.Terminal
-	Conn    Connection
+
+	// ssh 的连接
+	Conn Connection
+
+	// 连接（收发消息）； 发送消息 SendRequest
 	Channel ssh.Channel
 
-	done      chan struct{}
+	// 关闭连接
+	done chan struct{}
+	// 保证只是执行一次
 	closeOnce sync.Once
 
+	// 互斥锁
 	mu   sync.Mutex
 	env  []EnvVar
 	term string
@@ -115,6 +123,7 @@ func NewTerminal(conn *ssh.ServerConn, ch ssh.NewChannel) (*Terminal, error) {
 
 	go func() {
 		// Keep-Alive Ticker
+		// 探活结构
 		ticker := time.Tick(keepaliveInterval)
 		for {
 			select {

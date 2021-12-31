@@ -63,6 +63,7 @@ func (l *SSHListener) Serve() {
 
 		// Goroutineify to resume accepting sockets early
 		go func() {
+			// 来请求
 			term, err := l.handleConn(conn)
 			if err != nil {
 				logger.Printf("[%s] Failed to handshake: %s", conn.RemoteAddr(), err)
