@@ -192,11 +192,11 @@ func (r *Room) Join(u *message.User) (*Member, error) {
 	}
 	// TODO: Remove user ID from sets, probably referring to a prior user.
 	r.History(u)
-	s := fmt.Sprintf("Hello %s ! (Connected: %d)" +
-		"\n\n" +
-		"Welcome to ruoxi.fun . Let's together learn !" +
-		"\n\n", u.Name(), r.Members.Len())
+	s := fmt.Sprintf("欢迎新用户： %s ! (Connected: %d)" , u.Name(), r.Members.Len())
 	r.Send(message.NewAnnounceMsg(s))
+
+	r.Send(message.NewSystemMsg(r.commands.Help(false), u))
+
 	return member, nil
 }
 
