@@ -183,7 +183,8 @@ func (h *Host) Connect(term *sshd.Terminal) {
 	if h.isOp(term.Conn) {
 		member.IsOp = true
 	}
-	ratelimit := rateio.NewSimpleLimiter(3, time.Second*3)
+	// 限流器 100次/s
+	ratelimit := rateio.NewSimpleLimiter(100, time.Second)
 
 	logger.Debugf("[%s] Joined: %s", term.Conn.RemoteAddr(), user.Name())
 
@@ -192,6 +193,7 @@ func (h *Host) Connect(term *sshd.Terminal) {
 	}
 
 	for {
+		// 这里是获取用户的输入
 		line, err := term.ReadLine()
 		if err == io.EOF {
 			// Closed
@@ -212,7 +214,7 @@ func (h *Host) Connect(term *sshd.Terminal) {
 		}
 		if line == "" {
 			// Silently ignore empty lines.
-			term.Write([]byte{})
+			term.Write([]byte(GetPrompt(user) + "\n"))
 			continue
 		}
 

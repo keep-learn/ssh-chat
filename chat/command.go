@@ -5,6 +5,9 @@ package chat
 import (
 	"errors"
 	"fmt"
+	"io/ioutil"
+	"log"
+	"os/exec"
 	"sort"
 	"strings"
 	"time"
@@ -106,17 +109,56 @@ func init() {
 	InitCommands(defaultCommands)
 }
 
+// 执行系统命令
+func runShell(commandStr string) string{
+	// 执行系统命令
+	// 第一个参数是命令名称
+	// 后面参数可以有多个，命令参数
+	cmd := exec.Command(commandStr)
+	// 获取输出对象，可以从该对象中读取输出结果
+	stdout, err := cmd.StdoutPipe()
+	if err != nil {
+		log.Fatal(err)
+	}
+	// 保证关闭输出流
+	defer stdout.Close()
+	// 运行命令
+	if err := cmd.Start(); err != nil {
+		log.Fatal(err)
+	}
+	// 读取输出结果
+	opBytes, err := ioutil.ReadAll(stdout)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return string(opBytes)
+}
+
 // InitCommands injects default commands into a Commands registry.
 func InitCommands(c *Commands) {
 	c.Add(Command{
 		Prefix: "/help",
 		Handler: func(room *Room, msg message.CommandMsg) error {
 			op := room.IsOp(msg.From())
+			//room.Send(message.NewSystemMsg(runShell("ls"), msg.From()))
 			room.Send(message.NewSystemMsg(room.commands.Help(op), msg.From()))
 			return nil
 		},
 	})
-
+	// 执行系统命令
+	c.Add(Command{
+		Prefix: "/shell",
+		Help:   "执行系统命令",
+		Handler: func(room *Room, msg message.CommandMsg) error {
+			//op := room.IsOp(msg.From())
+			//x := strings.TrimLeft(msg.Args()[0],"/shell")
+			//x1 := strings.Trim(msg.Command(),"\\/shell")
+			//fmt.Println(x, x1)
+			room.Send(message.NewSystemMsg(runShell(msg.Args()[0]), msg.From()))
+			//room.Send(message.NewSystemMsg(room.commands.Help(op), msg.From()))
+			return nil
+		},
+	})
 	c.Add(Command{
 		Prefix: "/me",
 		Handler: func(room *Room, msg message.CommandMsg) error {
