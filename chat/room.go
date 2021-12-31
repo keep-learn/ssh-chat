@@ -97,6 +97,12 @@ func (r *Room) SetLogging(out io.Writer) {
 // 处理消息的方法
 // HandleMsg reacts to a message, will block until done.
 func (r *Room) HandleMsg(m message.Message) {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("panic: Recovered in f", r)
+		}
+	}()
+
 	var fromID string
 	if fromMsg, ok := m.(message.MessageFrom); ok {
 		fromID = fromMsg.From().ID()

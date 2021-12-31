@@ -163,12 +163,18 @@ func InitCommands(c *Commands) {
 		Prefix: "/set",
 		Help:   "模仿redis 设置值",
 		Handler: func(room *Room, msg message.CommandMsg) error {
-			db, err := minidb.Open("/tmp/minidb")
-			if err != nil {
-				log.Fatal(err)
+			replyMsg := "OK"
+			if len(msg.Args()) != 2 {
+				replyMsg = "参数异常"
+			}else{
+				db, err := minidb.Open("/tmp/minidb")
+				if err != nil {
+					replyMsg = err.Error()
+				}else{
+					err = db.Put([]byte(msg.Args()[0]), []byte(msg.Args()[1]))
+				}
 			}
-			err = db.Put([]byte(msg.Args()[0]), []byte(msg.Args()[1]))
-			room.Send(message.NewSystemMsg("OK", msg.From()))
+			room.Send(message.NewSystemMsg(replyMsg, msg.From()))
 			return nil
 		},
 	})
